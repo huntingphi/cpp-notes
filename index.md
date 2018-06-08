@@ -163,3 +163,72 @@ It is not necessary to initialise the pointer when it is declared. Not doing so 
 ### Multiple Indirection
 
 > "In certain cases it is desirable to store the address of variable in memory, which itself contains an address. This is known as multiple indirection, and the indirection may continue for as many levels as required. Each new level requires that one add an additional * after the type declaration, thus for two levels of indirection."
+
+
+### The Pointer void*
+
+C++ allows for a *generic pointer* denoted by:
+
+```c++
+
+void * ptr;
+
+
+```
+
+It has no specific type and therefore must be cast to the appropriate type before use.
+
+### Arrays and pointers
+
+C++ considers the array name to be a pointer to the first element of the array. That is,
+
+ ```c++
+
+int arr[7] = {0,1,2,3,4,5,6};
+
+std::cout<<*arr<<std::endl;
+
+```
+will print out ```0```.
+
+Also note that any pointer in C++ can be dereferenced either by the ```*``` operator or the array index operator:
+
+```c++
+
+char* cptr = new char[2];
+cptr[0] = 'b';
+cptr[1] = 'a';
+int* iptr = new int[2];
+*iptr = 0;
+*(iptr+1) = 10; //Equivalent to iptr[1];
+
+std::cout<<cptr[1]<<std::endl; //prints a
+std::cout<<*(cptr+1)<<std::endl; //Also prints a
+std::cout<<*(iptr+1)<<std::endl; //prints 10
+std::cout<<*iptr+1<<std::endl; //prints 1
+
+```
+
+Also note that the indirection operator has higher precedence than the + operator as shown above, hence ```*iptr+1``` results in ```(*iptr)+1```.
+
+Multi-dimensional arrays are also stored as a sequence of consecutive items in memory.
+
+Note that, given a 2D char array, because a pointer to a char is how C++ interprets a string, the following code:
+
+```c++
+
+char* cptr = new char[2];
+cptr[0] = 'b';
+cptr[1] = 'a';
+std::cout<<cptr<<std::endl; //prints co
+
+char carr[2][2];
+    carr[0][0] = '1';
+    carr[0][1] = '2';
+    carr[1][0] = '3';
+    carr[1][1] = '4'; //prints 1234\0
+
+```
+
+prints everything in the array, and will do the same for the nth array in a multidimensional array.
+
