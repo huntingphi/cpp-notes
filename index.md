@@ -21,13 +21,16 @@ The header file itself is inserted using an ```#include``` directive, which simp
 The ```#define``` directive allows us to define constants which can be subsequently be used throughout our code. In the case of this directive the C++ pre-processor scans the code looking for occurrences of the *macro* we have defined. When it finds one, it physically replaces it with the value of the defined macro.
 
 For example:
+
 ```c++
 
 #define MYNUMBER 22
 if (variable == MYNUMBER)
 
 ```
+
 expands to
+
 ``` c++
 
 if(variable == 22)
@@ -45,6 +48,7 @@ For example:
 #define NEW_VALUE (VALUE + 22)
 
 ```
+
 and with arguments:
 
 ```c++
@@ -105,6 +109,7 @@ A define directive can also span multiple lines by ending the line with a '\':
 }
 
 ```
+
 By convention the name of the macro is capitalized to distinguish it from a variable or function call. If a constant value or string is used at various places in code a macro should be defined and used instead.
 
 ### Pre-processor string operations
@@ -141,6 +146,7 @@ Note that it is possible to mix pointer and non-pointer types in a variable decl
 int *row, *col, length //row and col are int*, length is an int
 
 ```
+
 Consider the following: we have a block of memory which is referred to by a pointer ```ptr```.
 How do we access the actual data to which the pointer refers? The **dereference operator \*** provides that function. So, if we know that a data item resides at address 0x100000 (i.e. ```ptr = 0x100000```) we can use ```*ptr``` to access the actual data item itself.
 
@@ -163,7 +169,6 @@ It is not necessary to initialise the pointer when it is declared. Not doing so 
 ### Multiple Indirection
 
 > "In certain cases it is desirable to store the address of variable in memory, which itself contains an address. This is known as multiple indirection, and the indirection may continue for as many levels as required. Each new level requires that one add an additional * after the type declaration, thus for two levels of indirection."
-
 
 ### The Pointer void*
 
@@ -189,6 +194,7 @@ int arr[7] = {0,1,2,3,4,5,6};
 std::cout<<*arr<<std::endl;
 
 ```
+
 will print out ```0```.
 
 Also note that any pointer in C++ can be dereferenced either by the ```*``` operator or the array index operator:
@@ -232,3 +238,32 @@ char carr[2][2];
 
 prints everything in the array, and will do the same for the nth array in a multidimensional array.
 
+### Dynamic Allocation
+
+Arrays are often inadequate as it isn't possible to change their allocated memory space as the program runs. The solution to this is *dynamic memory allocation* via the ```new``` keyword. Memory acquired this way is allocated on the heap and will persist until freed up by the programmer (via the ```delete``` keyword which, for object types, invokes the destructor) or the program terminates. This is in contrast to auto (automatic) variables, created on the stack, that are destroyed as soon as they go out of scope.
+
+### Function Pointers
+
+A function pointer is a variable that stores the address of a function that can later be called through that function pointer.
+
+**Syntax**
+
+From [CProgramming.com](https://www.cprogramming.com/tutorial/function-pointers.html);
+> The syntax for declaring a function pointer might seem messy at first, but in most cases it's really quite straight-forward once you understand what's going on. Let's look at a simple example:
+```c++
+
+void (*foo)(int);
+
+```
+
+> In this example, foo is a pointer to a function taking one argument, an integer, and that returns void. It's as if you're declaring a function called "*foo", which takes an int and returns void; now, if *foo is a function, then foo must be a pointer to a function. (Similarly, a declaration like int *x can be read as *x is an int, so x must be a pointer to an int.)
+>The key to writing the declaration for a function pointer is that you're just writing out the declaration of a function but with (*func_name) where you'd normally just put func_name.
+> Sometimes people get confused when more stars are thrown in:
+
+```c++
+
+void *(*foo)(int *)
+
+```
+
+>Here, the key is to read inside-out; notice that the innermost element of the expression is *foo, and that otherwise it looks like a normal function declaration. *foo should refer to a function that returns a void * and takes an int *. Consequently, foo is a pointer to just such a function.
