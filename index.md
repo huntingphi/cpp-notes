@@ -250,6 +250,7 @@ A function pointer is a variable that stores the address of a function that can 
 
 From [CProgramming.com](https://www.cprogramming.com/tutorial/function-pointers.html);
 > The syntax for declaring a function pointer might seem messy at first, but in most cases it's really quite straight-forward once you understand what's going on. Let's look at a simple example:
+
 ```c++
 
 void (*foo)(int);
