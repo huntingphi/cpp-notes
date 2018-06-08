@@ -130,6 +130,7 @@ Token pasting - The creation of a new identifier from two supplied tokens using 
 2. Given a variable x, of type int, show how you would declare a variable to hold the address of x and how you could create a reference y, which refers to x.
 3. Write C++ code to create an array of 10 char pointers. Also provide the code that will destroy this array
 4. If you are given a function, ```void myfunc (float *x);```, show how you could set up a function pointer to refer to this function. How would you call the function via this pointer?
+5. Explain how an  r - value reference differs from a normal (l - value) reference. Illustrate your answer with an example.
 
 ### Pointers
 
@@ -379,3 +380,16 @@ int& myint = N;
 
 >"Once this code sequence has been executed, myint and N are the same item. The statement ```myint = M``` will not change the reference (changing the reference is illegal) but will simply assign the value of M to both N and myint." - Course Notes
 
+### R-Value references
+
+An r-value reference is a reference to a temporary variable that will vanish when the scope ends.
+
+```c++
+
+string &&s = string(‘‘hello’’); // create rvalue reference to string object
+
+```
+
+Here s refers to the temporary string object holding the string literal “hello”.
+
+These r-value references are used with the std::move() function to transfer data from an object that is about to go out of scope (the r-value reference) to one that will persist, and thus we can avoid unnecessary temporary object creation and data copying.
