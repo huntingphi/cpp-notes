@@ -6,7 +6,7 @@ The pre-processor scans the source code for embedded instructions prior to compi
 
 ### Key questions
 
-(CSC3022H June 2015)
+**(CSC3022H June 2015)**
 
 1. What do we mean by macro expression and where does this fit into the C++ compilation process?
 2. Given the following simple macro, show how to use this to evaluate the sum in an expression in your code can lead to logic errors: ```#define SQR(x) x*x```
@@ -113,4 +113,53 @@ In addition to macro expansion, the C++ pre-processor has the following string o
 
 Stringizing - Taking an identifier and turning it into a string of characters using the macro operator #. I.e ```#define func(x) #x``` will replace x with "x".
 
-Token pasting - The creation of a new identifier from two supplied tokens using the macro operator ##:
+Token pasting - The creation of a new identifier from two supplied tokens using the macro operator ##
+
+## Pointers and references
+
+### Key questions
+
+**(CSC3022H June 2015)**
+
+1. Explain how pointers and references differ in terms of accessing a variable
+2. Given a variable x, of type int, show how you would declare a variable to hold the address of x and how you could create a reference y, which refers to x.
+3. Write C++ code to create an array of 10 char pointers. Also provide the code that will destroy this array
+4. If you are given a function, ```void myfunc (float *x);```, show how you could set up a function pointer to refer to this function.
+
+### Pointers
+
+A *pointer* is simply the address of an item in memory, while a *pointer variable* is a variable that contains such an address.
+
+The most common reason why we would need a pointer is that we may be expected to deal with a memory reference that isn't explicitly coded into our program.
+
+> "Say, for example, that during code execution, the operating system allows our program access to a segment of shared memory. How will it communicate that location of the data? The code is static — it has been compiled, and the executable cannot change. However, if the program has been written correctly, the OS can return a *pointer* to the block of shared memory, and this value can then be used to gain access to that memory. In this example, one would make a system function call requesting access to the memory, and would then receive the pointer value (the starting address) which could be placed in a pointer variable for later use." - Course Notes
+
+Note that it is possible to mix pointer and non-pointer types in a variable declaration:
+
+```c++
+
+int *row, *col, length //row and col are int*, length is an int
+
+```
+Consider the following: we have a block of memory which is referred to by a pointer ```ptr```.
+How do we access the actual data to which the pointer refers? The **dereference operator \*** provides that function. So, if we know that a data item resides at address 0x100000 (i.e. ```ptr = 0x100000```) we can use ```*ptr``` to access the actual data item itself.
+
+Thus, if we have a block of memory, which is by definition contiguous, we can increment of decrement the memory address to move onto the next location.
+
+Consider the following piece of code:
+
+```c++
+
+float *fptr;
+fptr = GetBlockOfFloats(1024);
+cout << "Float at fptr is " << *fptr << "Float at position fptr + 20 is " << *(fptr+20) << endl;
+
+```
+
+All we have done here, is print out the value of the float at the address pointed to by fptr, which is the 1st float of 1024. We then **print out the float which is 20 steps higher in memory** i.e. the 21st float in the block. Note that **the address is updated in units of the appropriate size**: if we add one to the pointer, we move one float forward, not one byte or one word. If the pointer type was int, adding one would adjust the pointer in units of size int.
+
+It is not necessary to initialise the pointer when it is declared. Not doing so will result in an undefined value. C++ defines the constant NULL — which is the address 0x0. If you create a pointer variable you should initialise it to NULL to reduce the chance of a pointer error later.
+
+### Multiple Indirection
+
+> "In certain cases it is desirable to store the address of variable in memory, which itself contains an address. This is known as multiple indirection, and the indirection may continue for as many levels as required. Each new level requires that one add an additional * after the type declaration, thus for two levels of indirection."
