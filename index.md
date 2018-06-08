@@ -126,10 +126,10 @@ Token pasting - The creation of a new identifier from two supplied tokens using 
 
 **(CSC3022H June 2015)**
 
-1. Explain how pointers and references differ in terms of accessing a variable
+1. Explain how pointers and references differ in terms of accessing a variable.
 2. Given a variable x, of type int, show how you would declare a variable to hold the address of x and how you could create a reference y, which refers to x.
 3. Write C++ code to create an array of 10 char pointers. Also provide the code that will destroy this array
-4. If you are given a function, ```void myfunc (float *x);```, show how you could set up a function pointer to refer to this function.
+4. If you are given a function, ```void myfunc (float *x);```, show how you could set up a function pointer to refer to this function. How would you call the function via this pointer?
 
 ### Pointers
 
@@ -166,11 +166,11 @@ All we have done here, is print out the value of the float at the address pointe
 
 It is not necessary to initialise the pointer when it is declared. Not doing so will result in an undefined value. C++ defines the constant NULL — which is the address 0x0. If you create a pointer variable you should initialise it to NULL to reduce the chance of a pointer error later.
 
-### Multiple Indirection
+#### Multiple Indirection
 
 > "In certain cases it is desirable to store the address of variable in memory, which itself contains an address. This is known as multiple indirection, and the indirection may continue for as many levels as required. Each new level requires that one add an additional * after the type declaration, thus for two levels of indirection."
 
-### The Pointer void*
+#### The Pointer void*
 
 C++ allows for a *generic pointer* denoted by:
 
@@ -183,7 +183,7 @@ void * ptr;
 
 It has no specific type and therefore must be cast to the appropriate type before use.
 
-### Arrays and pointers
+#### Arrays and pointers
 
 C++ considers the array name to be a pointer to the first element of the array. That is,
 
@@ -238,17 +238,17 @@ char carr[2][2];
 
 prints everything in the array, and will do the same for the nth array in a multidimensional array.
 
-### Dynamic Allocation
+#### Dynamic Allocation
 
 Arrays are often inadequate as it isn't possible to change their allocated memory space as the program runs. The solution to this is *dynamic memory allocation* via the ```new``` keyword. Memory acquired this way is allocated on the heap and will persist until freed up by the programmer (via the ```delete``` keyword which, for object types, invokes the destructor) or the program terminates. This is in contrast to auto (automatic) variables, created on the stack, that are destroyed as soon as they go out of scope.
 
-### Function Pointers
+#### Function Pointers
 
 A function pointer is a variable that stores the address of a function that can later be called through that function pointer.
 
 **Syntax**
 
-From [CProgramming.com](https://www.cprogramming.com/tutorial/function-pointers.html);
+From [CProgramming.com](https://www.cprogramming.com/tutorial/function-pointers.html):
 > The syntax for declaring a function pointer might seem messy at first, but in most cases it's really quite straight-forward once you understand what's going on. Let's look at a simple example:
 
 ```c++
@@ -257,9 +257,9 @@ void (*foo)(int);
 
 ```
 
-> In this example, foo is a pointer to a function taking one argument, an integer, and that returns void. It's as if you're declaring a function called "*foo", which takes an int and returns void; now, if *foo is a function, then foo must be a pointer to a function. (Similarly, a declaration like int *x can be read as *x is an int, so x must be a pointer to an int.)
->The key to writing the declaration for a function pointer is that you're just writing out the declaration of a function but with (*func_name) where you'd normally just put func_name.
-> Sometimes people get confused when more stars are thrown in:
+> In this example, ```foo``` is a pointer to a function taking one argument, an integer, and that returns void. It's as if you're declaring a function called "```*foo```", which takes an int and returns ```void```; now, if ```*foo``` is a function, then ```foo``` must be a pointer to a function. (Similarly, a declaration like ```int *x``` can be read as ```*x``` is an ```int```, so ```x``` must be a pointer to an ```int```.)
+>The key to writing the declaration for a function pointer is that you're just writing out the declaration of a function but with (```*func_name```) where you'd normally just put ```func_name```.
+>Sometimes people get confused when more stars are thrown in:
 
 ```c++
 
@@ -267,4 +267,88 @@ void *(*foo)(int *)
 
 ```
 
->Here, the key is to read inside-out; notice that the innermost element of the expression is *foo, and that otherwise it looks like a normal function declaration. *foo should refer to a function that returns a void * and takes an int *. Consequently, foo is a pointer to just such a function.
+>Here, the key is to read inside-out; notice that the innermost element of the expression is ```*foo```, and that otherwise it looks like a normal function declaration. ```*foo``` should refer to a function that returns a ```void *``` and takes an ```int *```. Consequently, ```foo``` is a pointer to just such a function.
+
+Functions are derereferenced by standard function invocation:
+
+```c++
+
+#include <stdio.h>
+void my_int_func(int x)
+{
+    printf( "%d\n", x );
+}
+
+
+int main()
+{
+    void (*foo)(int);
+    foo = &my_int_func;
+
+    /* call my_int_func (note that you do not need to write (*foo)(2) ) */
+    foo( 2 );
+    /* but if you want to, you may */
+    (*foo)( 2 );
+
+    return 0;
+}
+
+```
+
+> Note that function pointer syntax is flexible; it can either look like most other uses of pointers, with & and *, or you may omit that part of syntax. This is similar to how arrays are treated, where a bare array decays to a pointer, but you may also prefix the array with & to request its address.
+
+#### Smart Pointers
+
+Smart pointer: "Templated pointer management class which frees the user fro
+m having to de-allocate pointers explicitly"
+
+##### [Unique Pointers](http://en.cppreference.com/w/cpp/memory/unique_ptr)
+
+```unique_ptr``` wraps a pointer in an automatic variable. Therefore the pointer is automatically deleted when it leaves the scope. It's just as efficient as normal pointers with zero overhead.
+
+##### [Shared Pointers](http://en.cppreference.com/w/cpp/memory/shared_ptr)
+
+\<Will be filled out as needed>
+
+##### [Weak Pointers](http://en.cppreference.com/w/cpp/memory/weak_ptr)
+
+\<Will be filled out as needed>
+
+### References
+
+When a function is called with arguements, the contents of each arguement are copied to each *formal parameter* (the variables listed in the arguement list of the function declaration). This is known as *call by value* and is how function arguements are processed.
+
+An example:
+
+```c++
+
+void square(int x){
+    x*=x;
+}
+
+int num = 2;
+square(num);
+
+std::cout<<num<<std::endl; //Prints 2
+
+```
+
+The value 2 is printed above as ```num``` is *passed by value* (a ```num``` is copied into ```int x``` when passed to the function) and therefore is unaffected by changes within the function.
+
+To circumvent this we can pass ```num``` by reference:
+
+```c++
+
+void square(int& x){
+    x*=x;
+}
+
+int num = 2;
+square(num);
+
+std::cout<<num<<std::endl; //Prints 4
+
+```
+
+By passing by reference, a copy of the address of the actual parameter is stored in the formal parameters, therefore changes made in the function are made to the object at that copied address and apply to ```num``` regardless of changes taking place within the function.
+
