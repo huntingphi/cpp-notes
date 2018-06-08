@@ -350,5 +350,32 @@ std::cout<<num<<std::endl; //Prints 4
 
 ```
 
-By passing by reference, a copy of the address of the actual parameter is stored in the formal parameters, therefore changes made in the function are made to the object at that copied address and apply to ```num``` regardless of changes taking place within the function.
+By passing by reference, an alias to the actual parameter is stored in the formal parameters, therefore changes made in the function are made to the object at that aliased address and apply to ```num``` regardless of changes taking place within the function.
+
+Reference arguments cannot usually accept constant values, which makes sense as you can't pass the address of the value of a literal, such as the number 5, as these aren't stored in memory:
+
+>"In the C++ view of the world, a literal does not occupy any memory. A literal just exists.
+>This view makes that there is no address for a pointer to refer to when it would point to a literal and for that reason, pointers to literals are forbidden.
+>Const references are actually the exception here in that they allow apparent indirect access to a literal. What happens underneath is that the compiler creates a temporary object for the reference to refer to and that temporary object is initialized with the value of the reference.
+>This creating of a temporary that the reference gets bound to is only allowed for const references (and gets used in other scenarios as well, not only for literals), because that is the only case where a reference/pointer to a temporary won't have undesired side-effects." -[StackExchange Answer](https://softwareengineering.stackexchange.com/questions/224501/why-are-pointers-to-literals-not-possible)
+
+However if we use *constant reference*, declared as```const& type```we can circumvent this and pass in constant values. In this case, the compiler is notified that we will not try to modify the (constant) value we pass in and will thus allow the code to compile (it creates space for the constant, and connects the reference to this)
+
+>"It is more efficient to pass arguments by reference, since a reference is essentially a pointer and an address has a small fixed size, whereas if you pass a class object or structure by value, the entire object is duplicated and passed into the function, which is both time consuming and wasteful of space" - Course Notes
+
+References may also be defined for variables other than formal arguments of a function. The following limitations on references apply:
+
+1. The reference must be initialised to an existing variable. That is, it can't be empty, undefined or null.
+2. The reference cannot thereafter refer to any other variable. It is a fixed alias.
+
+For example:
+
+```c++
+
+int N = 2, M;
+int& myint = N;
+
+```
+
+>"Once this code sequence has been executed, myint and N are the same item. The statement ```myint = M``` will not change the reference (changing the reference is illegal) but will simply assign the value of M to both N and myint." - Course Notes
 
