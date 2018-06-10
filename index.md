@@ -42,9 +42,9 @@ The pre-processor scans the source code for embedded instructions prior to compi
 
 **(CSC3022H June 2015)**
 
-1. What do we mean by macro expression and where does this fit into the C++ compilation process?
-2. Given the following simple macro, show how to use this to evaluate the sum in an expression in your code can lead to logic errors: ```#define SQR(x) x*x```
-3. What is the purpose of ```#ifdef``` statements in a header file
+1. What do we mean by macro expression and where does this fit into the C++ compilation process? [Marks: 2]
+2. Given the following simple macro, show how to use this to evaluate the sum in an expression in your code can lead to logic errors: ```#define SQR(x) x*x``` [Marks: 2]
+3. What is the purpose of ```#ifdef``` statements in a header file [Marks: 1]
 There is no answer in the course notes but there is an answer for ```#ifndef```:
 > The purpose of the ```#ifndef``` (“if symbol not defined”) directive is to ensure that the header file is not included multiple times.
 
@@ -160,11 +160,11 @@ Token pasting - The creation of a new identifier from two supplied tokens using 
 
 **(CSC3022H June 2015)**
 
-1. Explain how pointers and references differ in terms of accessing a variable.
-2. Given a variable x, of type int, show how you would declare a variable to hold the address of x and how you could create a reference y, which refers to x.
-3. Write C++ code to create an array of 10 char pointers. Also provide the code that will destroy this array
-4. If you are given a function, ```void myfunc (float *x);```, show how you could set up a function pointer to refer to this function. How would you call the function via this pointer?
-5. Explain how an  r - value reference differs from a normal (l - value) reference. Illustrate your answer with an example.
+1. Explain how pointers and references differ in terms of accessing a variable. [1 Mark]
+2. Given a variable x, of type int, show how you would declare a variable to hold the address of x and how you could create a reference y, which refers to x. [1 Mark]
+3. Write C++ code to create an array of 10 char pointers. Also provide the code that will destroy this array. [1 Mark]
+4. If you are given a function, ```void myfunc (float *x);```, show how you could set up a function pointer to refer to this function. How would you call the function via this pointer? [2 Marks]
+5. Explain how an  r - value reference differs from a normal (l - value) reference. Illustrate your answer with an example. [2 Marks]
 
 ### Pointers
 
@@ -428,7 +428,7 @@ Here s refers to the temporary string object holding the string literal “hello
 
 These r-value references are used with the std::move() function to transfer data from an object that is about to go out of scope (the r-value reference) to one that will persist, and thus we can avoid unnecessary temporary object creation and data copying.
 
-## Classes and RAII
+## Overloading and the Big 5
 
 ### Key Questions
 
@@ -436,9 +436,13 @@ These r-value references are used with the std::move() function to transfer data
 
 [![csc3022hjune2015.png](https://s33.postimg.cc/7bhzxc7q7/csc3022hjune2015.png)](https://postimg.cc/image/wuacacra3/)
 
-1. What should go in the destructor? Explain.
-2. Write a move constructor for this class.
-3. Write a move assignment operator for this class
+1. What should go in the destructor? Explain. [Marks: 2]
+2. Write a move constructor for this class. [Marks: 2]
+3. Write a move assignment operator for this class. [Marks: 2]
+
+[![CSC3020_HJune2015.png](https://s33.postimg.cc/pvxhvwxsf/CSC3020_HJune2015.png)](https://postimg.cc/image/73lmsc1e3/)
+
+4. Overload the `+` operator to *concatenate* two sequences of int's. e.g {1,2,3} + {4,5,6} should give {1,2,3,4,5,6}. Write the function out correctly, making sure to show the parameters and the return type.
 
 #### The Default Constructor
 
@@ -700,7 +704,7 @@ The move assignment operator must:
 2. Transfer the relevant resources across from the source to the receiver
 3. Finally, leave the source in a state where it can be quickly and correctly destroyed
 
-### Rule of 5 (RAII) Cheatsheet from [cppreference.com](https://en.cppreference.com/w/cpp/language/rule_of_three)
+### Rule of 5 Cheatsheet from [cppreference.com](https://en.cppreference.com/w/cpp/language/rule_of_three)
 
 ```c++
 
@@ -753,3 +757,10 @@ class rule_of_five
 };
 
 ```
+**
+
+## Templates
+
+### Class Templates
+
+Class templates enable us to write generic classes and methods to be used for any type.
