@@ -396,6 +396,15 @@ These r-value references are used with the std::move() function to transfer data
 
 ### Classes and RAII
 
+###Key Questions
+
+**June 2015**
+[![csc3022hjune2015.png](https://s33.postimg.cc/wrqgnnddr/csc3022hjune2015.png)](https://postimg.cc/image/r3k5wr917/)
+
+1. What should go in the destructor? Explain.
+2. Write a move constructor for this class.
+3. Write a move assignment operator for this class
+
 #### The Default Constructor
 
 > "The purpose of a constructor is to provide a means to perform any necessary initialisation on the object, such as the allocation of memory or assigning default values to member variables" -Course Notes
