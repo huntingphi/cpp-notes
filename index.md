@@ -396,10 +396,11 @@ These r-value references are used with the std::move() function to transfer data
 
 ### Classes and RAII
 
-###Key Questions
+### Key Questions
 
 **June 2015**
-[![csc3022hjune2015.png](https://s33.postimg.cc/wrqgnnddr/csc3022hjune2015.png)](https://postimg.cc/image/r3k5wr917/)
+
+[![csc3022hjune2015.png](https://s33.postimg.cc/7bhzxc7q7/csc3022hjune2015.png)](https://postimg.cc/image/wuacacra3/)
 
 1. What should go in the destructor? Explain.
 2. Write a move constructor for this class.
