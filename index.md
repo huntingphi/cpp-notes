@@ -95,7 +95,7 @@ if (2+3*5>5) //Not (2+3)*5
 
 ```
 
-A define directive can also span multiple lines by ending the line with a '\':
+A define directive can also span multiple lines by ending the line with a '\\':
 
 ```c++
 
@@ -411,7 +411,7 @@ Given the Matrix class, and the two constructors below,
 
 ```c++
 
-Matric(){
+Matrix(){
     std::cout<<"Default constructor called"<<std::endl;
     rows=cols=0;
     space = NULL;
@@ -430,8 +430,181 @@ The first constructor will be called when we instantiate an object with no param
 Matrix foo_matrix; //prints "Default constructor called"
 Matrix bar_matrix(2,2); //prints "Paramterised constructor called"
 Matrix* matrix_ptr = new Matrix(2,2); //prints "Paramterised constructor called"
-Matrix matrix_arr[] = 
 
 ```
 
 A constructor is also used to initialise data members which cannot be initialised in a normal manner, such as ```const``` and reference variables that must be initialised when the object is created.
+
+If we declare an array of objects, the default constructor will be invoked for each one. It is possible for each array element to invoke a different constructor but this will only work with arrays declared on the stack. (Apparently, although I've tried it with arrays declared with the ```new``` keyword and it works fine )
+
+Using an array initialisation list:
+
+```c++
+
+Matrix foo_matrix; //prints "Default constructor called"
+Matrix bar_matrix(2,2); //prints "Paramterised constructor called"
+Matrix* matrix_ptr = new Matrix(2,2); //prints "Paramterised constructor called"
+Matrix matrices[] = {Matrix(2,2),Matrix()}; //prints "Paramterised constructor called \n "Default constructor called""
+
+```
+
+**Note that if any other constructor is defined, a default constructor must be defined or an error will be thrown at compile time**
+
+#### Destructor
+
+The destructor ensures that an class is properly eliminated when the object goes out of scope or is destroyed by the ```delete``` instruction. If it is not explicitly defined the compiler will generate one for housekeeping. A destructor must be defined for a constructor that dynamically allocates memory for that memory to be deallocated correctly when the object is destroyed.
+
+A destructor must satisfy the following rules:
+
+1. It must not have a return type or argument list - it therefore also can't be overloaded
+2. It must be in the public section of the class, take the same name as the class name, and be prefixed with a '~'
+
+#### Copy Constructor
+
+An object can also be initialised to the same as an existing instance via the copy constructor.
+> "C++ generates a default copy constructor which does a field by field copy from the source object to the (new) target object. Naturally, this copy is “shallow” in the sense that only field values are copied: any memory which a pointer field may point to will not be duplicated. If our class contains member variables that point to a dynamically allocated block of memory, we must write our own copy constructor to ensure that a “deep” copy occurs" - Course Notes
+
+Note the following subtley when calling a copy constructor defined for the above mentioned Matrix class:
+
+```c++
+
+Matrix(const Matrix& other) : row(other.row), col(other.col){
+    std::cout<<"Copy constructor called"<<std::endl;
+}
+
+Matrix matrix1();
+
+Matrix newMatrix_1(matrix1); // prints "Copy constructor called"
+Matrix newMatrix_2 = matrix1; //prints "Copy constructor called"
+newMatrix_2 = matrix1; //Doesn't print anything as it calls the default copy assignment operator
+
+```
+
+**The = operator invokes the copy constructor only in the context of the declation**
+
+
+#### Move Constructor
+
+Member functions often return a copy of an object. (Because C++ uses pass by value: it copies the actual parameter into the formal parameter, it returns that copy) This "return by value" causes the class copy constructor to be invoked, building a new class object with the contents of the temporary variable returned by the function.
+
+For example, consider the Person class, that has an object of a Car class as an attribute:
+
+```c++
+
+#include <iostream>
+
+using namespace std;
+class Car{
+public:
+  Car(){
+    std::cout<<"Default constructor called in Car"<<std::endl;
+  }
+  Car(Car&){
+    std::cout<<"Copy constructor called in Car"<<std::endl;
+  }
+  Car(Car&&){
+    std::cout<<"Move constructor called in Car"<<std::endl;
+  }
+};
+class Person{
+public:
+  Car car;//Prints "Default constructor called in Car" This is because we have two Car attributes in Person
+  Car car_1;//Prints "Default constructor called in Car"
+
+  Person(){}
+  Person(Car c):car(std::move(c)){}//Prints "Move constructor called in Car" /n "Default constructor called in Car"
+  Person(Car c, Car c_1):car(std::move(c)), car_1(c_1){}//Prints "Move constructor called in Car" /n "Copy constructor called in Car"
+
+  void setCar(Car c){//Prints "Copy constructor called in Car" bc passed by value
+
+  }
+  void setCarWithMove(Car c){}
+};
+
+int main()
+{
+    Person p;//Invokes Person Default constructor, and Car Default constructor for both Car attributes
+    Car new_car; //Invokes car Default constructor
+    Person p_1(new_car); //Invokes parametirsed constructor for Person, and move constructor for the first Car attribute and the Default constructor for the second
+    Car new_car_1;
+    Person p_2(new_car,new_car_1); //Invokes move constructor for the first Car attribute and the Default constructor for the second
+
+    p.setCar(new_car_1);//Invokes copy constructor for
+
+    return 0;
+}
+
+```
+
+A move constructor was introduced to avoid the overhead of another object instantiation by *"moving"* the contents out of the temporary value and into the new receiving value.
+
+The move constructor must:
+1. Take an r-value reference as the argument
+2. Must transfer the relevant resources from the source to the receiver
+3. Must leave the source object in a state where it can be quickly and correctly destroyed
+
+In the above example, we see how an object can either be moved or copied depending on what we pass to the constructor (note that ```std::move(<object>)``` takes the object and returns an r-value for it - **thats all**. It does no moving. Therefore by ```Car new_car(std::move(old_car)))``` we are invoking the move constructor.
+
+Consider the case where we have a car generator which returns a car:
+
+```c++
+
+Car generateCar(){
+  Car generated_car(/*some values to generate a car*/)
+  return generated_car;
+}
+
+```
+
+Here we have created a car object within the method, which is then passed to a constructor in order to copy/move the values over:
+
+```c++
+
+//In Person class, modifying the default constructor to now assign a value to car, using random_car as a intermediary variable just to be able to use the move constructor
+Person(){
+  Car random_car(Car::generateCar());
+  car = random_car;
+}
+
+```
+
+This results in 3 car objects, being made **inside the person constructor**. One is made and returned in ```generateCar()```, one to copy the return value of ```generateCar()``` to the random_car object (ie one is made when copying the generated car to the formal parameter of the copy constructor), and finally one when copying the generated car to the formal parameter of the copy assignment operator.
+
+Now, given the following code:
+
+```c++
+
+//In Person class, modifying the default constructor to now assign a value to car, using random_car as a intermediary variable just to be able to use the move constructor
+Person(){
+  Car random_car(std::move(Car::generateCar()));
+  car = std::move(random_car);
+}
+
+```
+
+Instead of three objects, we only make one. in ```Car::generateCar()```, which is then returned. That same object is then passed to the move constructor of Car, which moves its resources over to ```random_car``` without creating a new object. Then, once again, that same object is then passed to the move assignment operator of Car, again not making a new object.
+
+We see thus that two temporary objects could be avoided.
+
+> "When the compiler sees a value return statement or the existence of a temporary variable as described above, it will look for a move constructor. If one doesn't exist it will use an expensive copy construction instead." - Course Notes
+
+**Things to note:**
+1. The r-value reference is not const - as its object will be changed (its values deleted)
+2. In the vector class (and presumably other STL containers), the following code:
+
+```c++
+
+std::vector<int> v = {1,2,3,4}, w;
+w = std::move(v);
+
+```
+
+"Moves" the data from v into w, leaving v empty.
+
+>"No deep copy takes place: state and pointers to buffers etc are simply "moved" across!" - Course Notes
+
+3. In the case of having a move constructor for person, we must call ```std::move(old_person.car)``` in the constructor, but for simple types such as an int for age, we have ```age = old_person.age; old_person.age =0``` and if we had a pointer called arr_ptr for, lets say an array of doubles, we would have ```arr_ptr = old_person.arr_ptr; old_person.arr_ptr =0```. So we copy and zero the old values, using ```<object_name>.<field_name>``` to access the values bc references.
+
+#### Copy Assignment Operator
+
+#### Move Assignment Operator
