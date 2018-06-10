@@ -1,5 +1,39 @@
 # C++ Notes
 
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:0 orderedList:0 -->
+
+- [C++ Notes](#c-notes)
+	- [The C++ Pre-processor](#the-c-pre-processor)
+		- [Key questions](#key-questions)
+		- [Preprocessor Directives](#preprocessor-directives)
+		- [Pre-processor string operations](#pre-processor-string-operations)
+	- [Pointers and references](#pointers-and-references)
+		- [Key questions](#key-questions)
+		- [Pointers](#pointers)
+			- [Multiple Indirection](#multiple-indirection)
+			- [The Pointer void*](#the-pointer-void)
+			- [Arrays and pointers](#arrays-and-pointers)
+			- [Dynamic Allocation](#dynamic-allocation)
+			- [Function Pointers](#function-pointers)
+			- [Smart Pointers](#smart-pointers)
+				- [[Unique Pointers](http://en.cppreference.com/w/cpp/memory/unique_ptr)](#unique-pointershttpencppreferencecomwcppmemoryuniqueptr)
+				- [[Shared Pointers](http://en.cppreference.com/w/cpp/memory/shared_ptr)](#shared-pointershttpencppreferencecomwcppmemorysharedptr)
+				- [[Weak Pointers](http://en.cppreference.com/w/cpp/memory/weak_ptr)](#weak-pointershttpencppreferencecomwcppmemoryweakptr)
+		- [References](#references)
+		- [R-Value references](#r-value-references)
+		- [Classes and RAII](#classes-and-raii)
+		- [Key Questions](#key-questions)
+			- [The Default Constructor](#the-default-constructor)
+			- [Destructor](#destructor)
+			- [Copy Constructor](#copy-constructor)
+			- [Move Constructor](#move-constructor)
+		- [Operator Overloading](#operator-overloading)
+			- [Copy Assignment Operator](#copy-assignment-operator)
+			- [Move Assignment Operator](#move-assignment-operator)
+		- [Rule of 5 (RAII) Cheatsheet from [cppreference.com](https://en.cppreference.com/w/cpp/language/rule_of_three)](#rule-of-5-raii-cheatsheet-from-cppreferencecomhttpsencppreferencecomwcpplanguageruleofthree)
+
+<!-- /TOC -->
+
 ## The C++ Pre-processor
 
 The pre-processor scans the source code for embedded instructions prior to compilation. These commands usually modify the code prior to compilation, although they can be used to modify the way the compiler generates code (using the ```#pragma``` instruction for example)
@@ -497,7 +531,7 @@ newMatrix_2 = matrix1; //Doesn't print anything as it calls the default copy ass
 
 Member functions often return a copy of an object. (Because C++ uses pass by value: it copies the actual parameter into the formal parameter, it returns that copy) This "return by value" causes the class copy constructor to be invoked, building a new class object with the contents of the temporary variable returned by the function.
 
-For example, consider the Person class, that has an object of a Car class as an attribute:
+For example, consider the <a name="person">Person</a> class, that has an object of a Car class as an attribute:
 
 ```c++
 
@@ -615,6 +649,107 @@ w = std::move(v);
 
 3. In the case of having a move constructor for person, we must call ```std::move(old_person.car)``` in the constructor, but for simple types such as an int for age, we have ```age = old_person.age; old_person.age =0``` and if we had a pointer called arr_ptr for, lets say an array of doubles, we would have ```arr_ptr = old_person.arr_ptr; old_person.arr_ptr =0```. So we copy and zero the old values, using ```<object_name>.<field_name>``` to access the values bc references.
 
+### Operator Overloading
+
+C++ permits most of the operator set to be overloaded. These include the function call operator ```()``` as well as ```new``` and ```delete```. Operators that cannot be overlaoded are:
+1. ?: (conditional)
+2. . (member selection)
+3. .* (member selection with pointer-to-member)
+4. :: (scope resolution)
+5. sizeof (object size information)
+6. typeid (object type information)
+
+The precedence and associativity don't change
+
 #### Copy Assignment Operator
 
+Consider the following copy assignment operator for the [Person](#person) class, with the arbitrary double array, ```arr```:
+
+```c++
+
+/*in Person class*/
+Person& operator=(const Person& other){
+  if(this = &other) return *this; //Avoid copying person into itself
+
+  if( arr != null){
+      delete [] arr; //We must call delete on all pointers to avoid memory leak
+  }
+
+  car = other.car;
+  car_1 = other.car_1;
+  arr = new double[other.array_size]; //imagining Person had an array_size variable else we would have to manually calculate the size
+  for (size_t i = 0; i < array_size; i++) {
+    arr[i] = other.arr[i];
+  }
+  return *this;
+}
+
+```
+
+Note with the pointer above:
+> "Assignment would call the destructor first to avoid a memory leak if the value being overwritten contained a ptr to data off the heap. If you simply overwrite the ptr, then you leak memory. Thus the built-in assignment operator should be overridden in this case (since the built-in will leak)" - Stack Overflow Answer by an [Associate Professor](https://stackoverflow.com/users/398461/wcochran)
+
+**A note on return types:**
+If we use a temp value to store, say the product of adding two objects, and return that value, then the temp value will go out of scope when the function returns and therefore a reference to it won't reference anything.
+Therefore only when the return value references an object or variable still in scope can a reference type be returned.
+
 #### Move Assignment Operator
+
+The move assignment operator must:
+1. Release any existing resources held by the receiving object
+2. Transfer the relevant resources across from the source to the receiver
+3. Finally, leave the source in a state where it can be quickly and correctly destroyed
+
+### Rule of 5 (RAII) Cheatsheet from [cppreference.com](https://en.cppreference.com/w/cpp/language/rule_of_three)
+
+```c++
+
+class rule_of_five
+{
+    char* cstring; // raw pointer used as a handle to a dynamically-allocated memory block
+ public:
+    rule_of_five(const char* arg)
+    : cstring(new char[std::strlen(arg)+1]) // allocate
+    {
+        std::strcpy(cstring, arg); // populate
+    }
+    ~rule_of_five()
+    {
+        delete[] cstring;  // deallocate
+    }
+    rule_of_five(const rule_of_five& other) // copy constructor
+    {
+        cstring = new char[std::strlen(other.cstring) + 1];
+        std::strcpy(cstring, other.cstring);
+    }
+    rule_of_five(rule_of_five&& other) : cstring(other.cstring) // move constructor
+    {
+        other.cstring = nullptr;
+    }
+    rule_of_five& operator=(const rule_of_five& other) // copy assignment
+    {
+        char* tmp_cstring = new char[std::strlen(other.cstring) + 1];
+        std::strcpy(tmp_cstring, other.cstring);
+        delete[] cstring;
+        cstring = tmp_cstring;
+        return *this;
+    }
+    rule_of_five& operator=(rule_of_five&& other) // move assignment
+    {
+        if(this!=&other) // prevent self-move
+        {
+            delete[] cstring;
+            cstring = other.cstring;
+            other.cstring = nullptr;
+        }
+        return *this;
+    }
+// alternatively, replace both assignment operators with
+//  rule_of_five& operator=(rule_of_five other)
+//  {
+//      std::swap(cstring, other.cstring);
+//      return *this;
+//  }
+};
+
+```
