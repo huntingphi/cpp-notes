@@ -414,7 +414,7 @@ int& myint = N;
 
 >"Once this code sequence has been executed, myint and N are the same item. The statement ```myint = M``` will not change the reference (changing the reference is illegal) but will simply assign the value of M to both N and myint." - Course Notes
 
-### R-Value references
+#### R-Value references
 
 An r-value reference is a reference to a temporary variable that will vanish when the scope ends.
 
@@ -428,7 +428,7 @@ Here s refers to the temporary string object holding the string literal “hello
 
 These r-value references are used with the std::move() function to transfer data from an object that is about to go out of scope (the r-value reference) to one that will persist, and thus we can avoid unnecessary temporary object creation and data copying.
 
-### Classes and RAII
+## Classes and RAII
 
 ### Key Questions
 
