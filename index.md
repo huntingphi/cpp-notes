@@ -30,7 +30,7 @@
 		- [Operator Overloading](#operator-overloading)
 			- [Copy Assignment Operator](#copy-assignment-operator)
 			- [Move Assignment Operator](#move-assignment-operator)
-		- [Rule of 5 Cheatsheet from](#rule-of-5-cheatsheet-from-cppreferencecomhttpsencppreferencecomwcpplanguageruleofthree)
+		- [Rule of 5 Cheatsheet](#rule-of-5-cheatsheet-from-cppreferencecomhttpsencppreferencecomwcpplanguageruleofthree)
 	- [Templates](#templates)
 		- [Class Templates](#class-templates)
 
