@@ -20,8 +20,8 @@
 				- [[Shared Pointers](http://en.cppreference.com/w/cpp/memory/shared_ptr)](#shared-pointershttpencppreferencecomwcppmemorysharedptr)
 				- [[Weak Pointers](http://en.cppreference.com/w/cpp/memory/weak_ptr)](#weak-pointershttpencppreferencecomwcppmemoryweakptr)
 		- [References](#references)
-		- [R-Value references](#r-value-references)
-		- [Classes and RAII](#classes-and-raii)
+			- [R-Value references](#r-value-references)
+	- [Overloading and the Big 5](#overloading-and-the-big-5)
 		- [Key Questions](#key-questions)
 			- [The Default Constructor](#the-default-constructor)
 			- [Destructor](#destructor)
@@ -30,7 +30,9 @@
 		- [Operator Overloading](#operator-overloading)
 			- [Copy Assignment Operator](#copy-assignment-operator)
 			- [Move Assignment Operator](#move-assignment-operator)
-		- [Rule of 5 (RAII) Cheatsheet from [cppreference.com](https://en.cppreference.com/w/cpp/language/rule_of_three)](#rule-of-5-raii-cheatsheet-from-cppreferencecomhttpsencppreferencecomwcpplanguageruleofthree)
+		- [Rule of 5 Cheatsheet from](#rule-of-5-cheatsheet-from-cppreferencecomhttpsencppreferencecomwcpplanguageruleofthree)
+	- [Templates](#templates)
+		- [Class Templates](#class-templates)
 
 <!-- /TOC -->
 
@@ -764,3 +766,58 @@ class rule_of_five
 ### Class Templates
 
 Class templates enable us to write generic classes and methods to be used for any type.
+
+Syntax:
+
+```c++
+
+template <typename a_type> class a_class {...};
+
+```
+
+Given the class calc:
+
+```c++
+
+class calc
+{
+  public:
+    int multiply(int x, int y);
+    int add(int x, int y);
+ };
+int calc::multiply(int x, int y)
+{
+  return x*y;
+}
+int calc::add(int x, int y)
+{
+  return x+y;
+}
+
+```
+
+A generic version could be given by
+
+```c++
+
+template <class A_Type>
+class calc
+{
+  public:
+    A_Type multiply(A_Type x, A_Type y);
+    A_Type add(A_Type x, A_Type y);
+};
+template <class A_Type>
+A_Type calc<A_Type>::multiply(A_Type x,A_Type y)
+{
+  return x*y;
+}
+template <class A_Type>
+A_Type calc<A_Type>::add(A_Type x, A_Type y)
+{
+  return x+y;
+}
+
+```
+
+> "One may imagine that the compiler replaces T by the types specified within the <> and generates new classes (i.e. source code) for each variant. *This is known as template instantiation.*" - Course Notes
