@@ -44,11 +44,30 @@ The pre-processor scans the source code for embedded instructions prior to compi
 
 **(CSC3022H June 2015)**
 
-1. What do we mean by macro expression and where does this fit into the C++ compilation process? [Marks: 2]
+1. What do we mean by macro expansion and where does this fit into the C++ compilation process? [Marks: 2]
 2. Given the following simple macro, show how to use this to evaluate the sum in an expression in your code can lead to logic errors: ```#define SQR(x) x*x``` [Marks: 2]
 3. What is the purpose of ```#ifdef``` statements in a header file [Marks: 1]
 There is no answer in the course notes but there is an answer for ```#ifndef```:
 > The purpose of the ```#ifndef``` (“if symbol not defined”) directive is to ensure that the header file is not included multiple times.
+
+**(CSC3022H June 2015)**
+
+1. What do we mean by macro expansion and where does this fit into the C++ compilation process? [Marks: 2] *
+2. Define a macro, MULT(x,y) that multiplies it’s two arguments. Ensure that it will work  correctly for any sensible arguments you pass in [Marks: 1] **
+3. What are “include guards” within a header file and why do we need them? [Marks: 2]
+
+1. Give the output of the following C++ code fragment
+```c++
+
+#define M(x,y) x*y
+
+int main() {
+  int y=2;
+  std::cout << M(y+3,3) << std::endl
+  return 0;
+}
+
+```
 
 ### Preprocessor Directives
 
@@ -156,7 +175,7 @@ Stringizing - Taking an identifier and turning it into a string of characters us
 
 Token pasting - The creation of a new identifier from two supplied tokens using the macro operator ##
 
-## Pointers and references
+## Pointers and references and RAII
 
 ### Key questions
 
@@ -166,7 +185,46 @@ Token pasting - The creation of a new identifier from two supplied tokens using 
 2. Given a variable x, of type int, show how you would declare a variable to hold the address of x and how you could create a reference y, which refers to x. [1 Mark]
 3. Write C++ code to create an array of 10 char pointers. Also provide the code that will destroy this array. [1 Mark]
 4. If you are given a function, ```void myfunc (float *x);```, show how you could set up a function pointer to refer to this function. How would you call the function via this pointer? [2 Marks]
-5. Explain how an  r - value reference differs from a normal (l - value) reference. Illustrate your answer with an example. [2 Marks]
+5. Explain how an r - value reference differs from a normal (l - value) reference. Illustrate your answer with an example. [2 Marks]
+6. What are the key steps required by the RAII paradigm to correctly manage program resources?
+7. C++ 11 introduced “move semantics”. Explain what this is and how it enables one to write more efficient code. Use examples to illustrate your answer.
+
+**(CSC3022H June 2016)**
+
+1. Explain the meaning of the “&” in the numbered code statements listed below: [Marks: 2]
+```c++
+
+int x;
+int &y = x; //1
+int *z = &x;//2
+int & func(int & x); //3
+
+```
+
+2. C++ creates storage for data on either the heap or stack. Write two C++ statements that will create space for a single integer for both these cases. [Marks: 1]
+3. Write code to create a binary function object which returns the product of its two float arguments
+4. Explain how an r - value reference differs from a normal (l - value) reference. Illustrate your answer with an example which shows both. [2 Marks]
+
+**(CSC3023F June 2017)**
+
+1. List the variables on the  stack  and the  heap after  the following C++ code fragment  has executed. For each variable state its name type and value
+```c++
+
+float f1 = 36;
+float* p, q;
+p = new float;
+
+```
+2. Give the output of the following C++ code fragment
+```c++
+
+int a[] = {1,2,3};
+*(a+2) = *a*2;
+std::cout<< a[0]<<a[1]<<a[2]<<std::endl;
+
+```
+3. Compare and contrast the behaviour of  unique_ptr, shared_ptr and weak_ptr. Discuss situations in which each should be used and their relative performance cost.
+
 
 ### Pointers
 
@@ -306,7 +364,7 @@ void *(*foo)(int *)
 
 >Here, the key is to read inside-out; notice that the innermost element of the expression is ```*foo```, and that otherwise it looks like a normal function declaration. ```*foo``` should refer to a function that returns a ```void *``` and takes an ```int *```. Consequently, ```foo``` is a pointer to just such a function.
 
-Functions are derereferenced by standard function invocation:
+Functions are dereferenced by standard function invocation:
 
 ```c++
 
@@ -342,6 +400,14 @@ m having to de-allocate pointers explicitly"
 ##### [Unique Pointers](http://en.cppreference.com/w/cpp/memory/unique_ptr)
 
 ```unique_ptr``` wraps a pointer in an automatic variable. Therefore the pointer is automatically deleted when it leaves the scope. It's just as efficient as normal pointers with zero overhead.
+
+Usage examples:
+
+```c++
+
+std::unique_ptr<int> A(new int(10));
+int* ptr = A.get(); //Return raw pointer
+A.release();//releases (deletes) held pointer
 
 ##### [Shared Pointers](http://en.cppreference.com/w/cpp/memory/shared_ptr)
 
@@ -761,7 +827,30 @@ class rule_of_five
 ```
 **
 
+## Inheritance
+
+### Key questions
+
+**(CSC3022H June 2015)**
+
+1. When using inheritance in C++ we may choose to use dynamic binding for class methods. Explain what this means and why it is useful. Also comment on the performance overhead compared to static binding.
+
 ## Templates
+
+### Key questions
+
+**(CSC3022H June 2015)**
+
+1. Transform the class below into a templated class.
+2. Do all iterators support the ```--``` operator? Why?
+3. Write an \algorithm (templated function) with the signature ```std::size_t nonMatches(iterator start, iterator end, Fobj functor);``` that takes a range of iteration, applies a unary predicate functor to each element, and returns the number of items that *do not* satisfy the predicate.
+4. Given the vector v ```std::vector<int> v = {1,2,5,3,4,2,6,1}``` show how one could use the STL ```for_each()``` algorithm and a lambda to count how many elements are greater than 4.
+5. Generic programming is a powerful feature of C++; Explain what this is and how it  is achieved in C++
+
+**Other**
+
+1. List two operators that all iterators support
+2. Write an \algorithm (templated function) with the signature ```std::size_t copy_not_if(iterator start, iterator end, iterator out, Fobj functor);``` that takes a range of iteration, copies each element to the output starting at out, if it *does not* satisfy the predicate. It returns the number of elements copied through.
 
 ### Class Templates
 
@@ -821,3 +910,18 @@ A_Type calc<A_Type>::add(A_Type x, A_Type y)
 ```
 
 > "One may imagine that the compiler replaces T by the types specified within the <> and generates new classes (i.e. source code) for each variant. *This is known as template instantiation.*" - Course Notes
+
+Template code, including definitions for prototyped members, goes only in the header file.
+This is because of the following reason:
+> "A template function definition does not actually create storage at its point of declaration. It is simply a blueprint for an eventual template instantiation. In a sense the compiler treats a template as a macro definition which will be substituted and expanded during compilation." - Course Notes
+
+### Iterators and the STL
+
+> "An iterator allows us to visit each of the data elements in the “container class” in a consistent manner, which permits greater code re-use and simplification"
+> "Iterators and templates allow the development of completely general algorithms, in which all references to data have been abstracted away. In other words, these algorithms can work on any kind of data without the requirement for special versions defined through inheritance (or otherwise)." - Course Notes
+
+## Exceptions
+
+### Key questions
+
+1. When we process exceptions in C++ we use catch() clauses to provide blocks with handler code. Typically these will be of the form catch(exceptType& e) or catch(exceptType e). Which form is usually preferred and why?
